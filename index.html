@@ -39,25 +39,35 @@
   *{box-sizing:border-box}
   html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,sans-serif;font-size:14px}
   .app{display:grid;grid-template-columns:1fr 360px;grid-template-rows:auto auto 1fr auto;height:100vh}
-  nav{grid-column:1/3;display:flex;flex-wrap:wrap;align-items:stretch;gap:6px 0;padding:10px 18px 8px;border-bottom:1px solid var(--line);position:relative}
-  nav .grp{display:flex;flex-direction:column;flex:none;padding:0 14px;border-left:1px solid var(--line)}
-  nav .grp:first-child{border-left:none;padding-left:0}
-  nav .grp-t{font-size:11px;letter-spacing:.03em;font-style:italic;color:#7a909f;padding:0 10px 4px;white-space:nowrap}
-  nav .grp-t sup{font-size:8px}
-  nav .grp-l{display:flex;gap:4px;flex:1;align-items:flex-end}
-  nav a{display:flex;flex-direction:column;align-items:flex-start;gap:2px;color:var(--muted);text-decoration:none;padding:6px 10px 7px;white-space:nowrap;border-radius:8px;line-height:1.15;position:relative}
-  nav a b{font-size:14.5px;font-weight:500}
-  nav a span{font-size:11.5px;color:#6d8394;font-variant-numeric:tabular-nums}
-  nav a:hover{color:var(--ink);background:rgba(255,255,255,.04)}
-  nav a.on{color:var(--ink);background:var(--panel)}
-  nav a.on::after{content:"";position:absolute;left:10px;right:10px;bottom:2px;height:2px;border-radius:2px;background:var(--epreuve)}
-  nav a.on span{color:var(--epreuve)}
-  nav a.home-tab{justify-content:center;align-self:stretch;font-family:"IM Fell English",serif;color:var(--land)}
-  nav a.home-tab b{font-size:17px;font-weight:400}
+  nav{grid-column:1/3;display:flex;flex-wrap:wrap;justify-content:center;align-items:stretch;row-gap:10px;padding:16px 24px 12px;border-bottom:1px solid var(--line);position:relative}
+  nav .brand{flex-basis:100%;text-align:center;margin:0 0 4px}
+  nav .brand a{display:inline-block;font-family:"IM Fell English",serif;font-size:22px;color:var(--land);text-decoration:none;padding:2px 14px;border-radius:8px;letter-spacing:.2px}
+  nav .brand a em{font-style:italic;color:var(--ink)}
+  nav .brand a:hover{background:rgba(255,255,255,.04)}
+  nav .brand a.on{box-shadow:inset 0 -2px 0 var(--epreuve)}
+  nav .br{flex-basis:100%;height:0}
+  nav .grp{display:flex;flex-direction:column;align-items:center;flex:none;padding:0 18px;border-left:1px solid var(--line)}
+  nav .grp.first{border-left:none}
+  nav .grp-t{font-size:12px;letter-spacing:.03em;font-style:italic;color:#8299a8;padding:0 10px 5px;white-space:nowrap;text-align:center}
+  nav .grp-t sup{font-size:8.5px}
+  nav .grp-l{display:flex;gap:4px;justify-content:center}
+  nav a.tab{display:flex;flex-direction:column;align-items:center;gap:2px;color:#b9c3c9;text-decoration:none;padding:6px 11px 8px;white-space:nowrap;border-radius:8px;line-height:1.15;position:relative}
+  nav a.tab b{font-size:16px;font-weight:500}
+  nav a.tab span{font-size:12px;color:#7d93a3;font-variant-numeric:tabular-nums}
+  nav a.tab:hover{color:var(--ink);background:rgba(255,255,255,.04)}
+  nav a.tab.on{color:var(--ink);background:var(--panel)}
+  nav a.tab.on::after{content:"";position:absolute;left:11px;right:11px;bottom:2px;height:2px;border-radius:2px;background:var(--epreuve)}
+  nav a.tab.on span{color:var(--epreuve)}
+  @media (max-width:1100px){ nav .grp{padding:0 10px} nav a.tab{padding:6px 8px 8px} nav a.tab b{font-size:15px} }
   @media (max-width:860px){
-    nav{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding:8px 12px 6px}
+    nav{flex-wrap:nowrap;justify-content:flex-start;overflow-x:auto;scrollbar-width:none;padding:8px 12px 6px}
     nav::-webkit-scrollbar{display:none}
-    nav a b{font-size:13.5px}
+    nav .brand{flex-basis:auto;margin:0;align-self:center}
+    nav .brand a{font-size:16px;white-space:nowrap}
+    nav .brand a .long{display:none}
+    nav .br{display:none}
+    nav .grp.first{border-left:1px solid var(--line)}
+    nav a.tab b{font-size:14px}
   }
   header{grid-column:1/3;display:flex;align-items:baseline;gap:18px;flex-wrap:wrap;padding:12px 18px;border-bottom:1px solid var(--line)}
   h1{font-family:"IM Fell English",serif;font-weight:400;font-size:26px;margin:0;letter-spacing:.3px}
@@ -2891,6 +2901,7 @@ const NAV_GROUPS=[
   {t:"xixe siècle", tabs:["durville","darwin"]},
   {t:"xxe siècle", tabs:["polesud","apollo"]}
 ];
+const NAV_BREAK=2;
 const NAV_SHORT={cartier:"Cartier",lasalle:"La Salle",humboldt:"Humboldt",champlain:"Champlain",tasman:"Tasman",bering:"Bering",zhenghe:"Zheng He",colomb:"Colomb",gama:"Vasco de Gama",magellan:"Magellan",bougainville:"Bougainville",cook:"Cook",laperouse:"La Pérouse",durville:"Dumont d'Urville",darwin:"Darwin",polesud:"Pôle Sud",apollo:"Apollo"};
 function renderTabs(){
   const tabs=[...new Map(Object.entries(EXPS).map(([k,e])=>[e.tab,{k,e}])).values()]
@@ -2899,11 +2910,13 @@ function renderTabs(){
   const cur = HOME? null : E && E.tab;
   const byTab=new Map(tabs.map(x=>[x.e.tab,x]));
   const link=tb=>{ const x=byTab.get(tb); if(!x) return ""; const e=x.e;
-    return `<a href="#${first(e.tab)}" class="${e.tab===cur?"on":""}" title="${e.tabLabel} · ${e.tabYears}"><b>${NAV_SHORT[e.tab]||e.tabLabel}</b><span>${e.tabYears}</span></a>`; };
+    return `<a href="#${first(e.tab)}" class="tab ${e.tab===cur?"on":""}" title="${e.tabLabel} · ${e.tabYears}"><b>${NAV_SHORT[e.tab]||e.tabLabel}</b><span>${e.tabYears}</span></a>`; };
   const nav=document.getElementById("tabs");
-  nav.innerHTML = `<div class="grp"><div class="grp-t">&nbsp;</div><div class="grp-l"><a href="#accueil" class="home-tab ${HOME?"on":""}" title="Présentation du projet"><b>Accueil</b></a></div></div>` +
-    NAV_GROUPS.map(g=>`<div class="grp"><div class="grp-t">${g.t.replace(/\b([xvi]+)e\b/g,'<span style="font-variant:small-caps;font-style:normal">$1</span><sup>e</sup>')}</div><div class="grp-l">${g.tabs.map(link).join("")}</div></div>`).join("") +
-    (()=>{ const rest=tabs.filter(x=>!NAV_GROUPS.some(g=>g.tabs.includes(x.e.tab))); return rest.length?`<div class="grp"><div class="grp-t">Autres</div><div class="grp-l">${rest.map(x=>link(x.e.tab)).join("")}</div></div>`:""; })();
+  const grp=(g,first)=>`<div class="grp${first?" first":""}"><div class="grp-t">${g.t.replace(/\b([xvi]+)e\b/g,'<span style="font-variant:small-caps;font-style:normal">$1</span><sup>e</sup>')}</div><div class="grp-l">${g.tabs.map(link).join("")}</div></div>`;
+  const rest=tabs.filter(x=>!NAV_GROUPS.some(g=>g.tabs.includes(x.e.tab)));
+  const groups=[...NAV_GROUPS, ...(rest.length?[{t:"Autres",tabs:rest.map(x=>x.e.tab)}]:[])];
+  nav.innerHTML = `<div class="brand"><a href="#accueil" class="${HOME?"on":""}" title="Présentation du projet"><span class="long">Raconter les </span><em>explorateurs</em><span class="long"> de tous les temps</span></a></div>` +
+    groups.map((g,i)=> (i===NAV_BREAK?'<div class="br"></div>':'') + grp(g, i===0||i===NAV_BREAK)).join("");
   const on=nav.querySelector("a.on");
   if(on){ const r=on.getBoundingClientRect(), n=nav.getBoundingClientRect();
     if(r.left<n.left+20 || r.right>n.right-20) nav.scrollLeft += (r.left+r.width/2)-(n.left+n.width/2); }
